@@ -1,0 +1,39 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+  
+sensor:
+  - platform: serial
+    serial_port: /dev/ttyAMA0
+    
+  - platform: template
+    sensors:
+      # split values from serial sensor
+      temperature_s1:
+        friendly_name: "Vanha puoli"
+        unit_of_measurement: "°C"
+        value_template: >
+            {{ states.sensor.serial_sensor.attributes["inTempOldSide"] }}
+      temperature_s2:
+        friendly_name: "Uusi puoli"
+        unit_of_measurement: "°C"
+        value_template: >
+            {{ states.sensor.serial_sensor.attributes["inTempNewSide"] }}
+      temperature_s3:
+        friendly_name: "Ulkolämpötila"
+        unit_of_measurement: "°C"
+        value_template: >
+            {{ states.sensor.serial_sensor.attributes["outTemp"] }}
+        
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
